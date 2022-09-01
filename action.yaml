@@ -1,0 +1,29 @@
+name: 'Mobile App Internal Distribution'
+description: 'Creates internal testing build'
+
+inputs:
+  expo-token:
+    description: 'The token for the expo account being published to'
+    required: true
+  platform:
+    description: 'Which platform to build for (all|android|ios)'
+    required: false
+    default: 'all'
+  profile:
+    description: 'What profile from `eas.json` to use'
+    required: false
+    default: 'preview'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Expo login
+      uses: expo/expo-github-action@v7
+      with:
+        expo-version: latest
+        eas-version: latest
+        token: ${{ inputs.expo-token }}
+
+    - name: Create build
+      run: eas build --profile="${{ inputs.profile }}" --no-wait --non-interactive --platform="${{ inputs.platform }}"
+      shell: bash
